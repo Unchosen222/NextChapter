@@ -67,7 +67,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <div className="flex flex-col h-full bg-[#1e1329] text-white border-r border-purple-950/60 shadow-2xl select-none">
       
       {/* 1. Brand Logo Header */}
-      <div className="p-4 py-5 border-b border-white/10 flex items-center justify-center">
+      <div className="px-5 py-4 border-b border-white/10 flex items-center justify-center">
         <div 
           onClick={() => handleNavClick('discover')}
           className="cursor-pointer group flex items-center justify-center w-full"
@@ -75,7 +75,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <img 
             src="/logo.png" 
             alt="NextChapter Logo" 
-            className="h-16 lg:h-20 w-auto max-w-[200px] object-contain group-hover:scale-105 transition-transform duration-200"
+            className="w-full max-w-[210px] max-h-24 object-contain group-hover:scale-105 transition-transform duration-200 drop-shadow-md"
           />
         </div>
       </div>

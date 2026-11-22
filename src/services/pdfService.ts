@@ -81,7 +81,7 @@ export class PdfService {
 
     // 3. Header: NextChapter Academy Official Brand Logo & Blockchain Proof
     try {
-      doc.addImage(NEXTCHAPTER_LOGO_BASE64, 'PNG', (pageWidth - 36) / 2, 13, 36, 36);
+      doc.addImage(NEXTCHAPTER_LOGO_BASE64, 'PNG', (pageWidth - 46) / 2, 13, 46, 36);
     } catch {
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(24);
