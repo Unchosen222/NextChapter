@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-color: #E2E8F0;
+  }
+
+  body {
+    background-color: #FFFFFF;
+    color: #0A2540;
+    overflow-x: hidden;
+    font-family: 'Inter', 'Noto Sans Thai', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+  }
+
+  /* Prevent text and element overflow universally */
+  p, h1, h2, h3, h4, h5, h6, span, div, a, button, input, select, textarea {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+}
+
+@layer utilities {
+  /* Safe text truncation with ellipsis */
+  .truncate-hash {
+    font-family: monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Custom subtle scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F4F6F9;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+  }
+}
