@@ -109,7 +109,7 @@ export interface VerificationResult {
   calculatedHash?: string;
   hashMatched?: boolean;
   transactionHash?: string;
-  source: 'blockchain' | 'demo';
+  source: 'blockchain' | 'demo' | 'local';
 }
 
 export interface WalletState {

@@ -52,11 +52,13 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
 
         <div className="max-w-4xl mx-auto relative z-10">
           
-          <img 
-            src="/logo.png" 
-            alt="NextChapter Logo" 
-            className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-md hover:scale-105 transition-transform" 
-          />
+          <div className="flex justify-center mb-6">
+            <img 
+              src="/logo.png" 
+              alt="NextChapter Logo" 
+              className="h-32 sm:h-44 md:h-52 w-auto max-w-[340px] sm:max-w-[420px] object-contain drop-shadow-xl hover:scale-105 transition-transform duration-300" 
+            />
+          </div>
 
           <div className="inline-flex items-center space-x-2 bg-primary/5 border border-primary/15 px-4 py-1.5 rounded-full text-xs font-bold text-primary mb-6">
             <Sparkles className="w-4 h-4 text-secondary" />
