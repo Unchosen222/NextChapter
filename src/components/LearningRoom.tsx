@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Course, Lesson, User, WalletState } from '../types';
+import { Course, Lesson, User, WalletState, CertificateRecord } from '../types';
 import { StorageService } from '../services/storageService';
+import { CertificateService } from '../services/certificateService';
+import { PdfService } from '../services/pdfService';
 import confetti from 'canvas-confetti';
 import { 
   ArrowLeft, 
@@ -12,6 +14,8 @@ import {
   Award, 
   Sparkles,
   Wallet,
+  Download,
+  RefreshCw,
   ExternalLink
 } from 'lucide-react';
 
@@ -22,6 +26,7 @@ interface LearningRoomProps {
   onBackToDashboard: () => void;
   onViewCertificates: () => void;
   onConnectWallet: () => void;
+  onRefreshData?: () => void;
 }
 
 export const LearningRoom: React.FC<LearningRoomProps> = ({
@@ -31,6 +36,7 @@ export const LearningRoom: React.FC<LearningRoomProps> = ({
   onBackToDashboard,
   onViewCertificates,
   onConnectWallet,
+  onRefreshData,
 }) => {
   const lessons = course.lessons || [];
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
@@ -38,26 +44,71 @@ export const LearningRoom: React.FC<LearningRoomProps> = ({
 
   // Refresh progress state
   const [progressKey, setProgressKey] = useState(0);
+  const [claiming, setClaiming] = useState(false);
+  const [claimStatus, setClaimStatus] = useState<string | null>(null);
+
   const courseProgress = StorageService.getCourseProgress(currentUser.id, course.id);
+
+  // Check if certificate already exists for this course
+  const allCerts = StorageService.getCertificates();
+  const existingCert = allCerts.find(c => 
+    c.courseId === course.id && 
+    (c.studentId === currentUser.id || (currentUser.walletAddress && c.recipientAddress.toLowerCase() === currentUser.walletAddress.toLowerCase()))
+  );
 
   const isCurrentLessonDone = currentLesson
     ? StorageService.isLessonCompleted(currentUser.id, currentLesson.id)
     : false;
 
-  const handleToggleCurrentLesson = () => {
-    if (!currentLesson) return;
-    const isNowDone = StorageService.toggleLessonProgress(currentUser.id, currentLesson.id, course.id);
+  const handleToggleLesson = (lessonId: string) => {
+    StorageService.toggleLessonProgress(currentUser.id, lessonId, course.id);
     
     // Check if whole course completed
     const updated = StorageService.getCourseProgress(currentUser.id, course.id);
     if (updated.isEligible) {
       confetti({
-        particleCount: 100,
-        spread: 70,
+        particleCount: 120,
+        spread: 80,
         origin: { y: 0.6 },
       });
     }
     setProgressKey(prev => prev + 1);
+  };
+
+  const handleToggleCurrentLesson = () => {
+    if (!currentLesson) return;
+    handleToggleLesson(currentLesson.id);
+  };
+
+  const handleClaimCertificate = async () => {
+    setClaiming(true);
+    setClaimStatus('Generating NextChapter certificate & anchoring proof to Ethereum Sepolia...');
+
+    try {
+      const result = await CertificateService.claimCertificate(currentUser, course, wallet.address || undefined);
+      
+      confetti({
+        particleCount: 150,
+        spread: 90,
+        origin: { y: 0.5 },
+      });
+
+      // Automatically download the official PDF
+      result.pdfDoc.save(`${result.cert.certId}_Certificate.pdf`);
+      setClaimStatus(`Successfully issued & downloaded Certificate ${result.cert.certId}!`);
+      setProgressKey(prev => prev + 1);
+      if (onRefreshData) onRefreshData();
+    } catch (err: any) {
+      console.error(err);
+      alert(`Certificate Claim Failed: ${err.message || 'Transaction rejected or network error.'}`);
+    } finally {
+      setClaiming(false);
+    }
+  };
+
+  const handleDownloadExistingPdf = async (cert: CertificateRecord) => {
+    const res = await PdfService.generateCertificatePdf(cert, course);
+    res.doc.save(`${cert.certId}_Certificate.pdf`);
   };
 
   return (
@@ -109,35 +160,67 @@ export const LearningRoom: React.FC<LearningRoomProps> = ({
         
         {/* Course Completion Banner */}
         {courseProgress.isEligible && (
-          <div className="bg-gradient-to-r from-primary to-primary-dark text-white p-6 rounded-2xl shadow-lg mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="bg-gradient-to-r from-primary to-primary-dark text-white p-6 sm:p-7 rounded-3xl shadow-xl mb-8 flex flex-col md:flex-row items-center justify-between gap-6 border border-purple-400/30">
             <div className="flex items-center space-x-4">
-              <div className="w-14 h-14 bg-secondary text-darkBlack rounded-2xl flex items-center justify-center shrink-0 shadow-md">
-                <Award className="w-8 h-8" />
+              <div className="w-16 h-16 bg-secondary text-darkBlack rounded-2xl flex items-center justify-center shrink-0 shadow-lg">
+                <Award className="w-9 h-9" />
               </div>
               <div>
-                <h3 className="text-lg font-bold">100% Course Completed! Congratulations!</h3>
-                <p className="text-xs text-white/80 mt-1 max-w-xl">
-                  You have successfully finished all curriculum lessons. Your achievement has been forwarded to the instructor for cryptographic blockchain certificate issuance.
+                <div className="inline-flex items-center space-x-1.5 bg-white/10 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase mb-1">
+                  <Sparkles className="w-3 h-3 text-secondary" />
+                  <span>Curriculum 100% Completed</span>
+                </div>
+                <h3 className="text-xl font-extrabold text-white">
+                  {existingCert ? 'Your Verified Blockchain Certificate is Ready!' : 'Congratulations! Claim Your Certificate'}
+                </h3>
+                <p className="text-xs text-white/80 mt-1 max-w-xl leading-relaxed">
+                  {existingCert 
+                    ? `Anchored to Ethereum Sepolia Testnet with Certificate ID: ${existingCert.certId}. Download your high-res official PDF below.`
+                    : 'You have mastered all episodes in this course. You can now permanently anchor your achievement to the Ethereum blockchain.'
+                  }
                 </p>
+                {claimStatus && (
+                  <p className="text-xs text-secondary font-bold mt-2 animate-pulse">
+                    {claimStatus}
+                  </p>
+                )}
               </div>
             </div>
 
-            <div className="flex items-center space-x-3 shrink-0">
-              {currentUser.walletAddress ? (
-                <button
-                  onClick={onViewCertificates}
-                  className="bg-secondary hover:bg-secondary-dark text-darkBlack px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition flex items-center space-x-2"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  <span>View My Certificates</span>
-                </button>
+            <div className="flex flex-wrap items-center gap-3 shrink-0">
+              {existingCert ? (
+                <>
+                  <button
+                    onClick={() => handleDownloadExistingPdf(existingCert)}
+                    className="bg-secondary hover:bg-secondary-dark text-darkBlack px-5 py-3 rounded-2xl font-black text-xs shadow-lg transition flex items-center space-x-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Download Official PDF</span>
+                  </button>
+                  <button
+                    onClick={onViewCertificates}
+                    className="bg-white/10 hover:bg-white/20 text-white px-4 py-3 rounded-2xl font-bold text-xs transition"
+                  >
+                    View in Dashboard
+                  </button>
+                </>
               ) : (
                 <button
-                  onClick={onConnectWallet}
-                  className="bg-white text-primary hover:bg-gray-100 px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition flex items-center space-x-2"
+                  onClick={handleClaimCertificate}
+                  disabled={claiming}
+                  className="bg-secondary hover:bg-secondary-dark text-darkBlack px-6 py-3.5 rounded-2xl font-black text-xs shadow-xl transition flex items-center space-x-2 disabled:opacity-50 hover:scale-105 duration-200"
                 >
-                  <Wallet className="w-4 h-4 text-secondary" />
-                  <span>Connect Wallet for Credential</span>
+                  {claiming ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>Anchoring to Ethereum...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Award className="w-4 h-4" />
+                      <span>Claim & Download Certificate Now</span>
+                    </>
+                  )}
                 </button>
               )}
             </div>
@@ -253,7 +336,14 @@ export const LearningRoom: React.FC<LearningRoomProps> = ({
                           : 'hover:bg-gray-50 border-l-4 border-transparent'
                       }`}
                     >
-                      <div className="mt-0.5 shrink-0">
+                      <div 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleLesson(lesson.id);
+                        }}
+                        title={isDone ? "Mark as Incomplete" : "Mark as Completed"}
+                        className="mt-0.5 shrink-0 hover:scale-125 transition-transform cursor-pointer p-0.5"
+                      >
                         {isDone ? (
                           <CheckCircle className="w-4 h-4 text-emerald-600" />
                         ) : (

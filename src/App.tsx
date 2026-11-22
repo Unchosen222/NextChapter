@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { CourseCatalog } from './components/CourseCatalog';
 import { CourseDetailsModal } from './components/CourseDetailsModal';
+import { RegisterModal } from './components/RegisterModal';
 import { LearningRoom } from './components/LearningRoom';
 import { TeacherDashboard } from './components/TeacherDashboard';
 import { TraineeDashboard } from './components/TraineeDashboard';
@@ -28,6 +29,9 @@ export const App: React.FC = () => {
   
   // Demo Mode state
   const [isDemoMode, setIsDemoMode] = useState<boolean>(false);
+
+  // Register Modal state
+  const [isRegisterOpen, setIsRegisterOpen] = useState<boolean>(false);
 
   // MetaMask Wallet state
   const [wallet, setWallet] = useState<WalletState>({
@@ -172,6 +176,7 @@ export const App: React.FC = () => {
         onToggleDemoMode={handleToggleDemoMode}
         certificatesCount={certificatesCount}
         hasActiveLearningCourse={activeLearningCourse !== null}
+        onOpenRegister={() => setIsRegisterOpen(true)}
       />
 
       {/* 2. Main Content Scrollable Viewport */}
@@ -196,6 +201,7 @@ export const App: React.FC = () => {
               onBackToDashboard={() => setActiveTab(currentUser.role === 'Student' ? 'student-hub' : 'discover')}
               onViewCertificates={() => setActiveTab('student-hub')}
               onConnectWallet={handleConnectWallet}
+              onRefreshData={refreshData}
             />
           )}
 
@@ -207,6 +213,7 @@ export const App: React.FC = () => {
               onConnectWallet={handleConnectWallet}
               onStartLearning={handleStartLearning}
               onVerifyCert={handleVerifyCert}
+              onRefreshData={refreshData}
             />
           )}
 
@@ -258,10 +265,24 @@ export const App: React.FC = () => {
           onClose={() => setSelectedCourseForModal(null)}
           onEnrollSuccess={(course) => {
             setSelectedCourseForModal(null);
+            refreshData();
             handleStartLearning(course);
           }}
         />
       )}
+
+      {/* Register New User Modal */}
+      <RegisterModal
+        isOpen={isRegisterOpen}
+        onClose={() => setIsRegisterOpen(false)}
+        wallet={wallet}
+        onConnectWallet={handleConnectWallet}
+        onRegisterSuccess={(newUser) => {
+          refreshData();
+          if (newUser.role === 'Teacher') setActiveTab('teacher-hub');
+          else setActiveTab('student-hub');
+        }}
+      />
 
     </div>
   );

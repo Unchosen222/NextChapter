@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { User, Course, WalletState, CertificateRecord } from '../types';
 import { StorageService } from '../services/storageService';
 import { PdfService } from '../services/pdfService';
+import { CertificateService } from '../services/certificateService';
+import confetti from 'canvas-confetti';
 import { 
   GraduationCap, 
   Award, 
@@ -14,7 +16,8 @@ import {
   Wallet, 
   ShieldCheck, 
   Sparkles,
-  Eye
+  Eye,
+  RefreshCw
 } from 'lucide-react';
 
 interface TraineeDashboardProps {
@@ -24,6 +27,7 @@ interface TraineeDashboardProps {
   onConnectWallet: () => void;
   onStartLearning: (course: Course) => void;
   onVerifyCert: (certId: string) => void;
+  onRefreshData?: () => void;
 }
 
 export const TraineeDashboard: React.FC<TraineeDashboardProps> = ({
@@ -33,11 +37,13 @@ export const TraineeDashboard: React.FC<TraineeDashboardProps> = ({
   onConnectWallet,
   onStartLearning,
   onVerifyCert,
+  onRefreshData,
 }) => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [walletInput, setWalletInput] = useState(currentUser.walletAddress || '');
   const [isUpdatingWallet, setIsUpdatingWallet] = useState(false);
   const [walletSuccess, setWalletSuccess] = useState(false);
+  const [claimingCourseId, setClaimingCourseId] = useState<string | null>(null);
 
   const enrollments = StorageService.getEnrollments().filter(e => e.userId === currentUser.id);
   const enrolledCourses = enrollments.map(e => courses.find(c => c.id === e.courseId)).filter(Boolean) as Course[];
@@ -48,6 +54,24 @@ export const TraineeDashboard: React.FC<TraineeDashboardProps> = ({
     c.studentId === currentUser.id || 
     (currentUser.walletAddress && c.recipientAddress.toLowerCase() === currentUser.walletAddress.toLowerCase())
   );
+
+  const handleClaimCourse = async (course: Course) => {
+    setClaimingCourseId(course.id);
+    try {
+      const result = await CertificateService.claimCertificate(currentUser, course, wallet.address || undefined);
+      confetti({
+        particleCount: 150,
+        spread: 90,
+        origin: { y: 0.5 },
+      });
+      result.pdfDoc.save(`${result.cert.certId}_Certificate.pdf`);
+      if (onRefreshData) onRefreshData();
+    } catch (err: any) {
+      alert(`Claim failed: ${err.message || 'Transaction error.'}`);
+    } finally {
+      setClaimingCourseId(null);
+    }
+  };
 
   const handleSaveWallet = (e: React.FormEvent) => {
     e.preventDefault();
@@ -310,6 +334,11 @@ export const TraineeDashboard: React.FC<TraineeDashboardProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {enrolledCourses.map((course) => {
             const progress = StorageService.getCourseProgress(currentUser.id, course.id);
+            const courseCert = allCerts.find(c => 
+              c.courseId === course.id && 
+              (c.studentId === currentUser.id || (currentUser.walletAddress && c.recipientAddress.toLowerCase() === currentUser.walletAddress.toLowerCase()))
+            );
+            const isClaiming = claimingCourseId === course.id;
 
             return (
               <div key={course.id} className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden flex flex-col justify-between group hover:shadow-md transition">
@@ -329,6 +358,12 @@ export const TraineeDashboard: React.FC<TraineeDashboardProps> = ({
                     <span className="absolute top-3.5 left-3.5 bg-secondary text-darkBlack text-[10px] font-black px-2.5 py-0.5 rounded-full shadow">
                       {course.category}
                     </span>
+                    {courseCert && (
+                      <span className="absolute top-3.5 right-3.5 bg-emerald-600 text-white text-[10px] font-black px-2.5 py-0.5 rounded-full shadow flex items-center space-x-1">
+                        <ShieldCheck className="w-3 h-3" />
+                        <span>Certified</span>
+                      </span>
+                    )}
                   </div>
 
                   <div className="p-5 sm:p-6">
@@ -352,13 +387,45 @@ export const TraineeDashboard: React.FC<TraineeDashboardProps> = ({
                   </div>
                 </div>
 
-                <div className="p-5 sm:p-6 pt-0">
+                <div className="p-5 sm:p-6 pt-0 space-y-2">
+                  {progress.isEligible && !courseCert ? (
+                    <button
+                      onClick={() => handleClaimCourse(course)}
+                      disabled={isClaiming}
+                      className="w-full bg-secondary hover:bg-secondary-dark text-darkBlack text-xs font-black py-3 rounded-xl transition flex items-center justify-center space-x-2 shadow-md hover:scale-102 duration-200 disabled:opacity-50"
+                    >
+                      {isClaiming ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <span>Anchoring Certificate...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Award className="w-4 h-4" />
+                          <span>Claim Blockchain Certificate</span>
+                        </>
+                      )}
+                    </button>
+                  ) : courseCert ? (
+                    <button
+                      onClick={() => handleDownloadPdf(courseCert)}
+                      className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-3 rounded-xl transition flex items-center justify-center space-x-2 shadow-sm"
+                    >
+                      <Download className="w-4 h-4 text-white" />
+                      <span>Download Certificate PDF</span>
+                    </button>
+                  ) : null}
+
                   <button
                     onClick={() => onStartLearning(course)}
-                    className="w-full bg-primary hover:bg-primary-dark text-white text-xs font-bold py-3 rounded-xl transition flex items-center justify-center space-x-2 shadow-sm"
+                    className={`w-full text-xs font-bold py-2.5 rounded-xl transition flex items-center justify-center space-x-2 ${
+                      progress.isEligible 
+                        ? 'bg-gray-100 hover:bg-gray-200 text-darkBlack' 
+                        : 'bg-primary hover:bg-primary-dark text-white shadow-sm'
+                    }`}
                   >
-                    <Play className="w-4 h-4 fill-current shrink-0" />
-                    <span>Continue Learning Room</span>
+                    <Play className="w-3.5 h-3.5 fill-current shrink-0" />
+                    <span>{progress.isEligible ? 'Review Course Material' : 'Continue Learning Room'}</span>
                   </button>
                 </div>
               </div>

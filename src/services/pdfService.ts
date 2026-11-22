@@ -2,6 +2,7 @@ import { jsPDF } from 'jspdf';
 import QRCode from 'qrcode';
 import { Course, CertificateMetadata } from '../types';
 import { CryptoService } from './cryptoService';
+import { NEXTCHAPTER_LOGO_BASE64 } from '../assets/logoBase64';
 
 export interface GeneratedPdfResult {
   doc: jsPDF;
@@ -78,84 +79,88 @@ export class PdfService {
       doc.circle(x, y, 1.2, 'F');
     });
 
-    // 3. Header: NextChapter Academy & Blockchain Anchor
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(24);
-    doc.setTextColor(98, 65, 133);
-    doc.text('NEXTCHAPTER', pageWidth / 2, 28, { align: 'center' });
+    // 3. Header: NextChapter Academy Official Brand Logo & Blockchain Proof
+    try {
+      doc.addImage(NEXTCHAPTER_LOGO_BASE64, 'PNG', (pageWidth - 36) / 2, 13, 36, 36);
+    } catch {
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(24);
+      doc.setTextColor(98, 65, 133);
+      doc.text('NEXTCHAPTER', pageWidth / 2, 28, { align: 'center' });
+    }
 
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9.5);
     doc.setTextColor(255, 163, 69);
-    doc.text('ACADEMY OF CONTINUOUS LEARNING & TECHNOLOGY', pageWidth / 2, 34, { align: 'center' });
+    doc.text('ACADEMY OF CONTINUOUS LEARNING & TECHNOLOGY', pageWidth / 2, 51, { align: 'center' });
 
     doc.setFont('helvetica', 'italic');
-    doc.setFontSize(9);
+    doc.setFontSize(8.5);
     doc.setTextColor(100, 116, 139);
-    doc.text('Ethereum Sepolia Cryptographic Proof of Completion', pageWidth / 2, 39, { align: 'center' });
+    doc.text('Ethereum Sepolia Cryptographic Proof of Completion', pageWidth / 2, 55.5, { align: 'center' });
 
     // Decorative divider line
     doc.setDrawColor(255, 163, 69);
     doc.setLineWidth(0.5);
-    doc.line(70, 42, pageWidth - 70, 42);
+    doc.line(70, 58, pageWidth - 70, 58);
 
     // 4. Main Certificate Title
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(26);
+    doc.setFontSize(23);
     doc.setTextColor(22, 22, 24);
-    doc.text('CERTIFICATE OF ACHIEVEMENT', pageWidth / 2, 54, { align: 'center' });
+    doc.text('CERTIFICATE OF ACHIEVEMENT', pageWidth / 2, 68, { align: 'center' });
 
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(11);
+    doc.setFontSize(10.5);
     doc.setTextColor(100, 116, 139);
-    doc.text('This is to certify that', pageWidth / 2, 63, { align: 'center' });
+    doc.text('This is to certify that', pageWidth / 2, 76, { align: 'center' });
 
     // 5. Recipient Name
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(24);
+    doc.setFontSize(23);
     doc.setTextColor(98, 65, 133);
     const recipientName = (metadata.studentName || 'Recipient').toUpperCase();
-    doc.text(recipientName, pageWidth / 2, 75, { align: 'center' });
+    doc.text(recipientName, pageWidth / 2, 87, { align: 'center' });
 
     // Underline for name
     const textWidth = doc.getTextWidth(recipientName);
     doc.setDrawColor(98, 65, 133);
     doc.setLineWidth(0.75);
-    doc.line((pageWidth - textWidth) / 2 - 5, 78, (pageWidth + textWidth) / 2 + 5, 78);
+    doc.line((pageWidth - textWidth) / 2 - 5, 90, (pageWidth + textWidth) / 2 + 5, 90);
 
     // Student ID if present
     if (metadata.studentId) {
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(10);
+      doc.setFontSize(9.5);
       doc.setTextColor(100, 116, 139);
-      doc.text(`Student ID: ${metadata.studentId}`, pageWidth / 2, 84, { align: 'center' });
+      doc.text(`Student ID: ${metadata.studentId}`, pageWidth / 2, 95.5, { align: 'center' });
     }
 
     // 6. Qualification & Course Details
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(11);
+    doc.setFontSize(10.5);
     doc.setTextColor(100, 116, 139);
-    doc.text('has successfully completed the advanced training program in', pageWidth / 2, 92, { align: 'center' });
+    doc.text('has successfully completed the advanced training program in', pageWidth / 2, 102, { align: 'center' });
 
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(17);
+    doc.setFontSize(16);
     doc.setTextColor(22, 22, 24);
-    doc.text(course.title, pageWidth / 2, 102, { align: 'center', maxWidth: 210 });
+    doc.text(course.title, pageWidth / 2, 111, { align: 'center', maxWidth: 210 });
 
     // Grade / Distinction
     const gradeText = metadata.grade || 'Pass with Distinction';
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(11);
+    doc.setFontSize(10.5);
     doc.setTextColor(255, 163, 69);
-    doc.text(`Honors: ${gradeText}`, pageWidth / 2, 111, { align: 'center' });
+    doc.text(`Honors: ${gradeText}`, pageWidth / 2, 119, { align: 'center' });
 
     // 7. Course Competencies / Skills
     if (course.skills && course.skills.length > 0) {
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(9);
+      doc.setFontSize(8.5);
       doc.setTextColor(100, 116, 139);
       const skillsStr = `Key Competencies: ${course.skills.slice(0, 5).join(' • ')}`;
-      doc.text(skillsStr, pageWidth / 2, 118, { align: 'center', maxWidth: 220 });
+      doc.text(skillsStr, pageWidth / 2, 125, { align: 'center', maxWidth: 220 });
     }
 
     // 8. Bottom Information Section: Signatures & QR Code

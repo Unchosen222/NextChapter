@@ -57,6 +57,24 @@ export class StorageService {
     return INITIAL_USERS;
   }
 
+  static addUser(user: User): User[] {
+    const users = this.getAllUsers();
+    users.push(user);
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(users));
+    this.setCurrentUser(user);
+
+    try {
+      supabase.from('users').upsert([{
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        wallet_address: user.walletAddress,
+      }]).then(() => {});
+    } catch {}
+
+    return users;
+  }
+
   /**
    * Link wallet address to student profile
    */

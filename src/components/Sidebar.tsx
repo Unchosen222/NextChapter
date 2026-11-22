@@ -16,7 +16,8 @@ import {
   Award,
   Layers,
   LogOut,
-  ExternalLink
+  ExternalLink,
+  UserPlus
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -32,6 +33,7 @@ interface SidebarProps {
   onToggleDemoMode: () => void;
   certificatesCount: number;
   hasActiveLearningCourse: boolean;
+  onOpenRegister: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -47,6 +49,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onToggleDemoMode,
   certificatesCount,
   hasActiveLearningCourse,
+  onOpenRegister,
 }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
@@ -69,9 +72,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={() => handleNavClick('discover')}
           className="flex items-center space-x-3 cursor-pointer group"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-secondary to-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20 font-black text-darkBlack text-lg shrink-0 group-hover:scale-105 transition-transform duration-200">
-            NC
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="NextChapter Logo" 
+            className="w-10 h-10 object-contain rounded-xl bg-white/5 p-1 shrink-0 group-hover:scale-105 transition-transform duration-200"
+          />
           <div className="min-w-0">
             <div className="flex items-center space-x-1 leading-none">
               <span className="text-secondary font-black text-2xl tracking-tight whitespace-nowrap">Next</span>
@@ -91,8 +96,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* 2. Active User & Role Switcher Card */}
       <div className="p-4 border-b border-white/10 relative">
-        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">
-          Active Account & Role
+        <div className="flex items-center justify-between text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">
+          <span>Active Account</span>
+          <button
+            onClick={onOpenRegister}
+            className="text-secondary hover:text-secondary-light flex items-center space-x-1 font-black transition hover:underline"
+          >
+            <UserPlus className="w-3 h-3" />
+            <span>+ Register</span>
+          </button>
         </div>
 
         <button
@@ -157,6 +169,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </span>
               </button>
             ))}
+
+            {/* Register New Account Action */}
+            <div className="pt-2 border-t border-white/10 mt-1">
+              <button
+                onClick={() => {
+                  setRoleDropdownOpen(false);
+                  onOpenRegister();
+                }}
+                className="w-full flex items-center justify-center space-x-2 py-2 px-3 rounded-lg bg-secondary hover:bg-secondary-dark text-darkBlack text-xs font-black transition shadow-sm"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                <span>+ Register New Account</span>
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -341,12 +367,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Top Header */}
       <header className="md:hidden sticky top-0 z-40 bg-[#1e1329] text-white border-b border-purple-950/80 px-4 py-3 flex items-center justify-between shadow-md">
         <div 
-          className="flex items-center space-x-2 cursor-pointer"
+          className="flex items-center space-x-2.5 cursor-pointer"
           onClick={() => handleNavClick('discover')}
         >
-          <div className="w-8 h-8 rounded-lg bg-secondary text-darkBlack font-black flex items-center justify-center text-sm shadow">
-            NC
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="NextChapter" 
+            className="w-8 h-8 object-contain rounded-lg bg-white/5 p-0.5 shrink-0"
+          />
           <span className="font-extrabold text-base text-white tracking-tight whitespace-nowrap">
             <span className="text-secondary">Next</span>Chapter
           </span>
