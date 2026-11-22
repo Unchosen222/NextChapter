@@ -207,58 +207,55 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-offWhite pb-24">
+    <div className="space-y-8 w-full">
       
       {/* Header Banner */}
-      <div className="bg-white border-b border-gray-200 py-10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div>
-              <span className="text-xs font-bold text-secondary uppercase tracking-wider block">Instructor Portal</span>
-              <h1 className="text-3xl font-extrabold text-darkBlack">
-                Teacher Dashboard & Certificate Studio
-              </h1>
-              <p className="text-xs text-gray-500 mt-1">
-                Oversee student curriculum completion and issue cryptographic Ethereum credentials.
-              </p>
-            </div>
-
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={() => setIsNewCourseOpen(true)}
-                className="bg-primary hover:bg-primary-dark text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm transition flex items-center space-x-2"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Create New Course</span>
-              </button>
-            </div>
+      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-200">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div>
+            <span className="text-xs font-bold text-secondary uppercase tracking-wider block">Instructor Portal</span>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-darkBlack">
+              Teacher Dashboard & Certificate Studio
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-500 mt-1">
+              Oversee student curriculum completion and issue cryptographic Ethereum credentials.
+            </p>
           </div>
 
-          {/* Metric Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
-            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-              <span className="text-[11px] text-gray-500 font-medium block">Total Courses</span>
-              <span className="text-2xl font-black text-darkBlack">{myCourses.length}</span>
-            </div>
-            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-              <span className="text-[11px] text-gray-500 font-medium block">Enrolled Students</span>
-              <span className="text-2xl font-black text-primary">{totalStudents}</span>
-            </div>
-            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-              <span className="text-[11px] text-gray-500 font-medium block">Certificates Issued</span>
-              <span className="text-2xl font-black text-emerald-600">{issuedCertsCount}</span>
-            </div>
-            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-              <span className="text-[11px] text-gray-500 font-medium block">Platform Revenue</span>
-              <span className="text-2xl font-black text-secondary">฿{totalRevenue.toLocaleString()}</span>
-            </div>
+          <div className="flex items-center space-x-3 shrink-0">
+            <button
+              onClick={() => setIsNewCourseOpen(true)}
+              className="bg-primary hover:bg-primary-dark text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm transition flex items-center space-x-2 whitespace-nowrap"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Create New Course</span>
+            </button>
           </div>
+        </div>
 
+        {/* Metric Cards */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+            <span className="text-[11px] text-gray-500 font-medium block">Total Courses</span>
+            <span className="text-2xl font-black text-darkBlack">{myCourses.length}</span>
+          </div>
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+            <span className="text-[11px] text-gray-500 font-medium block">Enrolled Students</span>
+            <span className="text-2xl font-black text-primary">{totalStudents}</span>
+          </div>
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+            <span className="text-[11px] text-gray-500 font-medium block">Certificates Issued</span>
+            <span className="text-2xl font-black text-emerald-600">{issuedCertsCount}</span>
+          </div>
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+            <span className="text-[11px] text-gray-500 font-medium block">Platform Revenue</span>
+            <span className="text-2xl font-black text-secondary">฿{totalRevenue.toLocaleString()}</span>
+          </div>
         </div>
       </div>
 
       {/* Main Studio Body */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+      <div className="space-y-6">
         
         {/* Navigation Tabs */}
         <div className="flex space-x-2 border-b border-gray-200 pb-4 mb-6">

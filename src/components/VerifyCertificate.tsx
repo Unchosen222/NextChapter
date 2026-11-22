@@ -103,7 +103,7 @@ export const VerifyCertificate: React.FC<VerifyCertificateProps> = ({ initialCer
       setCalculatedFileHash(hash);
 
       let extractedId = certIdInput.trim();
-      const match = file.name.match(/(SKIL-[A-Z0-9-]+)/i);
+      const match = file.name.match(/((?:NC|SKIL)-[A-Z0-9-]+)/i);
       if (match) {
         extractedId = match[1].toUpperCase();
         setCertIdInput(extractedId);
@@ -129,7 +129,7 @@ export const VerifyCertificate: React.FC<VerifyCertificateProps> = ({ initialCer
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-8">
+    <div className="w-full max-w-4xl mx-auto space-y-8">
       
       {/* Title & Introduction */}
       <div className="text-center space-y-2">

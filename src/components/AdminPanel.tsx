@@ -99,46 +99,44 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-offWhite pb-24">
+    <div className="space-y-8 w-full">
       
       {/* Banner */}
-      <div className="bg-white border-b border-gray-200 py-10 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <span className="text-xs font-bold text-red-600 uppercase tracking-wider block">Administrator Center</span>
-          <h1 className="text-3xl font-extrabold text-darkBlack">
-            System Administration & Security Governance
-          </h1>
-          <p className="text-xs text-gray-500 mt-1">
-            Audit cryptographic credentials, revoke compromised diplomas on-chain, and manage platform coupons.
-          </p>
+      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-gray-200">
+        <span className="text-xs font-bold text-red-600 uppercase tracking-wider block">Administrator Center</span>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-darkBlack mt-0.5">
+          System Administration & Security Governance
+        </h1>
+        <p className="text-xs sm:text-sm text-gray-500 mt-1">
+          Audit cryptographic credentials, revoke compromised diplomas on-chain, and manage platform coupons.
+        </p>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
-            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-              <span className="text-[11px] text-gray-500 font-medium block">Total Users</span>
-              <span className="text-2xl font-black text-darkBlack">{users.length}</span>
-            </div>
-            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-              <span className="text-[11px] text-gray-500 font-medium block">Total Courses</span>
-              <span className="text-2xl font-black text-primary">{courses.length}</span>
-            </div>
-            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-              <span className="text-[11px] text-gray-500 font-medium block">Active Certificates</span>
-              <span className="text-2xl font-black text-emerald-600">
-                {certificates.filter(c => !c.isRevoked).length}
-              </span>
-            </div>
-            <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
-              <span className="text-[11px] text-gray-500 font-medium block">Revoked Certificates</span>
-              <span className="text-2xl font-black text-red-600">
-                {certificates.filter(c => c.isRevoked).length}
-              </span>
-            </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6">
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+            <span className="text-[11px] text-gray-500 font-medium block">Total Users</span>
+            <span className="text-2xl font-black text-darkBlack">{users.length}</span>
+          </div>
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+            <span className="text-[11px] text-gray-500 font-medium block">Total Courses</span>
+            <span className="text-2xl font-black text-primary">{courses.length}</span>
+          </div>
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+            <span className="text-[11px] text-gray-500 font-medium block">Active Certificates</span>
+            <span className="text-2xl font-black text-emerald-600">
+              {certificates.filter(c => !c.isRevoked).length}
+            </span>
+          </div>
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4">
+            <span className="text-[11px] text-gray-500 font-medium block">Revoked Certificates</span>
+            <span className="text-2xl font-black text-red-600">
+              {certificates.filter(c => c.isRevoked).length}
+            </span>
           </div>
         </div>
       </div>
 
       {/* Main Studio Body */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+      <div className="space-y-6">
         
         {/* Navigation Tabs */}
         <div className="flex space-x-2 border-b border-gray-200 pb-4 mb-6">

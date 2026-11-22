@@ -1,254 +1,333 @@
 import React, { useState } from 'react';
+import { User, WalletState } from '../types';
 import { 
-  Award, 
-  SearchCheck, 
-  PlusCircle, 
-  Ban, 
   BookOpen, 
-  UserCheck, 
-  Wallet, 
-  LogOut, 
-  Settings, 
+  GraduationCap, 
+  LayoutDashboard, 
   ShieldCheck, 
+  ShieldAlert, 
+  Sparkles, 
+  Wallet, 
+  CheckCircle2, 
+  ChevronDown, 
   Menu, 
-  X,
-  Globe
+  X, 
+  Play, 
+  Award,
+  Layers,
+  LogOut,
+  ExternalLink
 } from 'lucide-react';
-import { WalletState } from '../types';
-import { useLanguage } from '../context/LanguageContext';
 
 interface SidebarProps {
+  currentUser: User;
+  onSwitchUser: (user: User) => void;
+  allUsers: User[];
   activeTab: string;
   setActiveTab: (tab: string) => void;
   wallet: WalletState;
   onConnectWallet: () => void;
   onDisconnectWallet: () => void;
-  onOpenConfig: () => void;
   isDemoMode: boolean;
+  onToggleDemoMode: () => void;
+  certificatesCount: number;
+  hasActiveLearningCourse: boolean;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
+  currentUser,
+  onSwitchUser,
+  allUsers,
   activeTab,
   setActiveTab,
   wallet,
   onConnectWallet,
   onDisconnectWallet,
-  onOpenConfig,
   isDemoMode,
+  onToggleDemoMode,
+  certificatesCount,
+  hasActiveLearningCourse,
 }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { language, setLanguage, t } = useLanguage();
+  const [roleDropdownOpen, setRoleDropdownOpen] = useState(false);
 
   const formatAddress = (addr: string) => {
     return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
   };
 
-  const navGroups: {
-    group: string;
-    items: {
-      id: string;
-      label: string;
-      icon: React.ComponentType<{ className?: string }>;
-      description: string;
-      adminOnly?: boolean;
-    }[];
-  }[] = [
-    {
-      group: t.navPublicGroup,
-      items: [
-        { id: 'verify', label: t.navVerify, icon: SearchCheck, description: t.navVerifyDesc },
-        { id: 'dashboard', label: t.navDashboard, icon: UserCheck, description: t.navDashboardDesc },
-        { id: 'courses', label: t.navCourses, icon: BookOpen, description: t.navCoursesDesc },
-      ],
-    },
-    {
-      group: t.navAdminGroup,
-      items: [
-        { id: 'issue', label: t.navIssue, icon: PlusCircle, adminOnly: true, description: t.navIssueDesc },
-        { id: 'revoke', label: t.navRevoke, icon: Ban, adminOnly: true, description: t.navRevokeDesc },
-      ],
-    },
-  ];
-
-  const handleNavClick = (id: string) => {
-    setActiveTab(id);
+  const handleNavClick = (tabId: string) => {
+    setActiveTab(tabId);
     setMobileOpen(false);
   };
 
   const SidebarContent = () => (
-    <div className="flex flex-col h-full justify-between bg-brand-primary text-white select-none">
+    <div className="flex flex-col h-full bg-[#1e1329] text-white border-r border-purple-950/60 shadow-2xl select-none">
       
-      {/* Top: Brand Header & Language Switch */}
-      <div>
-        <div className="px-5 py-4 border-b border-slate-800">
-          <div className="flex items-center justify-between mb-3">
-            {/* Brand Logo & Name */}
-            <div 
-              onClick={() => handleNavClick('verify')}
-              className="flex items-center space-x-2.5 cursor-pointer group min-w-0"
-            >
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-secondary to-brand-accent flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform duration-200 flex-shrink-0">
-                <Award className="w-5 h-5 text-white" />
-              </div>
-              
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center space-x-1.5">
-                  <span className="font-extrabold text-base sm:text-lg tracking-tight text-white whitespace-nowrap">
-                    {t.brandTitle}
-                  </span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-brand-accent/25 text-brand-accent border border-brand-accent/40 font-bold uppercase tracking-wider whitespace-nowrap">
-                    {t.badgeAcademy}
-                  </span>
-                </div>
-                <p className="text-[10px] text-slate-400 whitespace-nowrap font-medium">
-                  {t.brandSubtitle}
-                </p>
-              </div>
+      {/* 1. Brand Logo Header */}
+      <div className="p-5 border-b border-white/10">
+        <div 
+          onClick={() => handleNavClick('discover')}
+          className="flex items-center space-x-3 cursor-pointer group"
+        >
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-secondary to-amber-500 flex items-center justify-center shadow-lg shadow-amber-500/20 font-black text-darkBlack text-lg shrink-0 group-hover:scale-105 transition-transform duration-200">
+            NC
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center space-x-1 leading-none">
+              <span className="text-secondary font-black text-2xl tracking-tight whitespace-nowrap">Next</span>
+              <span className="text-white font-black text-2xl tracking-tight whitespace-nowrap">Chapter</span>
+            </div>
+            <div className="flex items-center space-x-1.5 mt-1.5">
+              <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-secondary/20 text-secondary border border-secondary/30 whitespace-nowrap">
+                Web3 Academy
+              </span>
+              <span className="text-[9px] text-gray-400 font-mono whitespace-nowrap">
+                Sepolia
+              </span>
             </div>
           </div>
-
-          {/* Bilingual Language Switcher Pill */}
-          <div className="flex items-center justify-between bg-white/5 rounded-xl p-1 border border-white/10">
-            <span className="text-[11px] font-semibold text-slate-400 pl-2 flex items-center space-x-1.5">
-              <Globe className="w-3.5 h-3.5 text-brand-accent" />
-              <span>Language:</span>
-            </span>
-            <div className="flex items-center space-x-1">
-              <button
-                onClick={() => setLanguage('en')}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                  language === 'en'
-                    ? 'bg-brand-accent text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                EN
-              </button>
-              <button
-                onClick={() => setLanguage('th')}
-                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                  language === 'th'
-                    ? 'bg-brand-accent text-white shadow-sm'
-                    : 'text-slate-400 hover:text-white hover:bg-white/10'
-                }`}
-              >
-                ไทย
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Navigation Groups */}
-        <div className="px-3 sm:px-4 py-4 space-y-4">
-          {navGroups.map((group, gIdx) => (
-            <div key={gIdx} className="space-y-1">
-              <p className="px-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
-                {group.group}
-              </p>
-              <div className="space-y-1">
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = activeTab === item.id;
-
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => handleNavClick(item.id)}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-left text-xs font-semibold transition-all duration-150 group ${
-                        isActive
-                          ? 'bg-brand-accent text-white shadow-md shadow-blue-500/25 font-bold'
-                          : 'text-slate-300 hover:text-white hover:bg-white/10'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-3 min-w-0">
-                        <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-white'}`} />
-                        <span className="truncate">{item.label}</span>
-                      </div>
-                      {item.adminOnly && (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40 ml-1 flex-shrink-0">
-                          {t.adminTag}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
         </div>
       </div>
 
-      {/* Bottom: Network Status & Wallet Box */}
-      <div className="p-3 sm:p-4 border-t border-slate-800 space-y-2.5">
-        
-        {/* Network & Mode Status Pill */}
-        <div className="px-3 py-2 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between text-xs">
-          <div className="flex items-center space-x-2 min-w-0">
-            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
-              isDemoMode 
-                ? 'bg-amber-400 animate-pulse'
-                : wallet.connected
-                ? wallet.isSepolia ? 'bg-emerald-400' : 'bg-rose-400 animate-ping'
-                : 'bg-emerald-400'
-            }`}></span>
-            <span className="text-[11px] font-medium text-slate-300 truncate">
-              {isDemoMode 
-                ? t.demoEvaluation 
-                : wallet.connected 
-                ? (wallet.isSepolia ? t.sepoliaTestnet : `Chain: ${wallet.chainId}`)
-                : t.sepoliaPublicRpc
-              }
-            </span>
-          </div>
-
-          <button
-            onClick={onOpenConfig}
-            title="Contract Settings & Demo Switch"
-            className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-white/10 transition-colors flex-shrink-0"
-          >
-            <Settings className="w-3.5 h-3.5" />
-          </button>
+      {/* 2. Active User & Role Switcher Card */}
+      <div className="p-4 border-b border-white/10 relative">
+        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-1">
+          Active Account & Role
         </div>
 
-        {/* Wallet Account Box */}
-        {wallet.connected && wallet.address ? (
-          <div className="bg-white/10 rounded-xl p-2.5 border border-white/10 space-y-1">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2 min-w-0">
-                <div className="w-6 h-6 rounded-lg bg-brand-accent/20 border border-brand-accent/40 flex items-center justify-center flex-shrink-0">
-                  <ShieldCheck className="w-3.5 h-3.5 text-brand-accent" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs font-bold text-white truncate font-mono">
-                    {formatAddress(wallet.address)}
-                  </p>
-                  <p className="text-[10px] text-slate-300 truncate font-mono">
-                    {wallet.balance} ETH
-                  </p>
-                </div>
+        <button
+          onClick={() => setRoleDropdownOpen(!roleDropdownOpen)}
+          className="w-full flex items-center justify-between p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition text-left"
+        >
+          <div className="flex items-center space-x-3 min-w-0">
+            <img 
+              src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'} 
+              alt={currentUser.name} 
+              className="w-9 h-9 rounded-xl object-cover shrink-0 border border-white/20"
+            />
+            <div className="min-w-0">
+              <p className="text-xs font-bold text-white truncate whitespace-nowrap">
+                {currentUser.name}
+              </p>
+              <div className="flex items-center space-x-1.5 mt-0.5">
+                <span className={`text-[9px] font-black uppercase px-1.5 py-0.2 rounded whitespace-nowrap ${
+                  currentUser.role === 'Student' ? 'bg-primary text-white' :
+                  currentUser.role === 'Teacher' ? 'bg-secondary text-darkBlack' : 'bg-red-500 text-white'
+                }`}>
+                  {currentUser.role}
+                </span>
+                <span className="text-[10px] text-gray-400 truncate font-mono">
+                  {currentUser.walletAddress ? formatAddress(currentUser.walletAddress) : 'No wallet'}
+                </span>
               </div>
+            </div>
+          </div>
+          <ChevronDown className={`w-4 h-4 text-gray-400 shrink-0 transition-transform ${roleDropdownOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {/* Dropdown for Role Switching */}
+        {roleDropdownOpen && (
+          <div className="absolute left-4 right-4 mt-2 bg-[#2a1b39] border border-purple-500/30 rounded-xl shadow-2xl p-2 z-50 space-y-1">
+            <p className="text-[10px] text-gray-400 px-2 py-1 font-semibold uppercase">
+              Switch User Role:
+            </p>
+            {allUsers.map((u) => (
+              <button
+                key={u.id}
+                onClick={() => {
+                  onSwitchUser(u);
+                  setRoleDropdownOpen(false);
+                  if (u.role === 'Teacher') handleNavClick('teacher-hub');
+                  else if (u.role === 'Admin') handleNavClick('admin-panel');
+                  else handleNavClick('student-hub');
+                }}
+                className={`w-full text-left p-2 rounded-lg text-xs flex items-center justify-between transition ${
+                  currentUser.id === u.id ? 'bg-primary text-white font-bold' : 'hover:bg-white/10 text-gray-200'
+                }`}
+              >
+                <div className="truncate mr-2">
+                  <p className="font-bold truncate whitespace-nowrap">{u.name}</p>
+                  <p className="text-[10px] text-gray-400 font-mono truncate">{u.email}</p>
+                </div>
+                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded whitespace-nowrap ${
+                  u.role === 'Student' ? 'bg-primary/50 text-white' :
+                  u.role === 'Teacher' ? 'bg-secondary text-darkBlack' : 'bg-red-600 text-white'
+                }`}>
+                  {u.role}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* 3. Navigation Links List */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-1.5">
+        
+        <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">
+          Academic Navigation
+        </div>
+
+        {/* Explore Courses */}
+        <button
+          onClick={() => handleNavClick('discover')}
+          className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-xs transition ${
+            activeTab === 'discover'
+              ? 'bg-secondary text-darkBlack font-bold shadow-md shadow-secondary/20'
+              : 'text-gray-300 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <BookOpen className="w-4 h-4 shrink-0" />
+          <span className="truncate whitespace-nowrap">Explore Courses</span>
+        </button>
+
+        {/* My Courses & Credentials (Student Only) */}
+        {currentUser.role === 'Student' && (
+          <button
+            onClick={() => handleNavClick('student-hub')}
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-xs transition ${
+              activeTab === 'student-hub'
+                ? 'bg-secondary text-darkBlack font-bold shadow-md shadow-secondary/20'
+                : 'text-gray-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <div className="flex items-center space-x-3 truncate">
+              <GraduationCap className="w-4 h-4 shrink-0" />
+              <span className="truncate whitespace-nowrap">My Courses & Certs</span>
+            </div>
+            {certificatesCount > 0 && (
+              <span className="px-2 py-0.5 bg-primary text-white text-[10px] font-bold rounded-full">
+                {certificatesCount}
+              </span>
+            )}
+          </button>
+        )}
+
+        {/* Active Learning Room Shortcut */}
+        {hasActiveLearningCourse && (
+          <button
+            onClick={() => handleNavClick('learning-room')}
+            className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-xs transition ${
+              activeTab === 'learning-room'
+                ? 'bg-primary text-white font-bold shadow-md shadow-primary/30'
+                : 'text-purple-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <Play className="w-4 h-4 fill-current shrink-0" />
+            <span className="truncate whitespace-nowrap">Interactive Room</span>
+          </button>
+        )}
+
+        {/* Instructor Studio (Teacher Only) */}
+        {currentUser.role === 'Teacher' && (
+          <button
+            onClick={() => handleNavClick('teacher-hub')}
+            className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-xs transition ${
+              activeTab === 'teacher-hub'
+                ? 'bg-secondary text-darkBlack font-bold shadow-md shadow-secondary/20'
+                : 'text-gray-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <LayoutDashboard className="w-4 h-4 shrink-0" />
+            <span className="truncate whitespace-nowrap">Instructor Studio</span>
+          </button>
+        )}
+
+        {/* Admin Hub (Admin Only) */}
+        {currentUser.role === 'Admin' && (
+          <button
+            onClick={() => handleNavClick('admin-panel')}
+            className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-xs transition ${
+              activeTab === 'admin-panel'
+                ? 'bg-red-600 text-white font-bold shadow-md shadow-red-600/30'
+                : 'text-gray-300 hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <ShieldAlert className="w-4 h-4 shrink-0 text-red-400" />
+            <span className="truncate whitespace-nowrap">Admin Governance</span>
+          </button>
+        )}
+
+        <div className="pt-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-2">
+          Public Tools
+        </div>
+
+        {/* Verify Certificate (Public) */}
+        <button
+          onClick={() => handleNavClick('verify')}
+          className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-xs transition ${
+            activeTab === 'verify'
+              ? 'bg-emerald-600 text-white font-bold shadow-md shadow-emerald-600/30'
+              : 'text-gray-300 hover:text-white hover:bg-white/5'
+          }`}
+        >
+          <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-400" />
+          <span className="truncate whitespace-nowrap">Verify Certificate</span>
+        </button>
+
+      </div>
+
+      {/* 4. Bottom Controls: Demo Mode & Wallet Connect */}
+      <div className="p-4 border-t border-white/10 space-y-3 bg-black/20">
+        
+        {/* Network & Demo Mode Toggle */}
+        <button
+          onClick={onToggleDemoMode}
+          className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-bold transition border ${
+            isDemoMode
+              ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+              : 'bg-purple-500/10 text-purple-300 border-purple-500/30'
+          }`}
+        >
+          <div className="flex items-center space-x-2 truncate">
+            <Sparkles className="w-3.5 h-3.5 text-secondary shrink-0" />
+            <span className="truncate whitespace-nowrap">
+              {isDemoMode ? 'Demo Mode (Zero Gas)' : 'Sepolia Testnet'}
+            </span>
+          </div>
+          <span className="text-[9px] px-1.5 py-0.5 rounded bg-white/10 font-mono shrink-0">
+            {isDemoMode ? 'TEST' : 'LIVE'}
+          </span>
+        </button>
+
+        {/* Wallet Connect Box */}
+        {wallet.connected && wallet.address ? (
+          <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] font-bold text-emerald-400 flex items-center space-x-1">
+                <CheckCircle2 className="w-3 h-3" />
+                <span>MetaMask Connected</span>
+              </span>
               <button
                 onClick={onDisconnectWallet}
-                title={t.disconnectWallet}
-                className="p-1 rounded-lg text-slate-400 hover:text-rose-300 hover:bg-rose-500/20 transition-colors flex-shrink-0"
+                title="Disconnect Wallet"
+                className="text-gray-400 hover:text-red-400 transition"
               >
                 <LogOut className="w-3.5 h-3.5" />
               </button>
             </div>
+            <p className="font-mono text-xs text-white font-bold truncate">
+              {formatAddress(wallet.address)}
+            </p>
+            {wallet.balance && (
+              <p className="text-[10px] text-gray-400 font-mono mt-0.5">
+                {parseFloat(wallet.balance).toFixed(4)} ETH
+              </p>
+            )}
           </div>
         ) : (
           <button
             onClick={onConnectWallet}
-            className="w-full flex items-center justify-center space-x-2 py-2 px-3 bg-brand-accent hover:bg-blue-600 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/25 transition-all"
+            className="w-full flex items-center justify-center space-x-2 py-2.5 px-3 bg-secondary hover:bg-secondary-dark text-darkBlack rounded-xl text-xs font-black shadow-lg shadow-amber-500/20 transition"
           >
-            <Wallet className="w-3.5 h-3.5 flex-shrink-0" />
-            <span>{t.connectWallet}</span>
+            <Wallet className="w-4 h-4 shrink-0" />
+            <span className="whitespace-nowrap">Connect MetaMask</span>
           </button>
         )}
 
-        <div className="pt-0.5 text-center">
-          <p className="text-[10px] text-slate-400">
-            SkilTrust • Sepolia Testnet
+        <div className="text-center pt-1">
+          <p className="text-[10px] text-gray-400 font-mono">
+            NextChapter • CSI301 SPU
           </p>
         </div>
 
@@ -260,46 +339,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       {/* Mobile Top Header */}
-      <header className="md:hidden sticky top-0 z-40 bg-brand-primary text-white border-b border-slate-800 px-4 py-3 flex items-center justify-between shadow-md">
+      <header className="md:hidden sticky top-0 z-40 bg-[#1e1329] text-white border-b border-purple-950/80 px-4 py-3 flex items-center justify-between shadow-md">
         <div 
           className="flex items-center space-x-2 cursor-pointer"
-          onClick={() => handleNavClick('verify')}
+          onClick={() => handleNavClick('discover')}
         >
-          <div className="w-8 h-8 rounded-lg bg-brand-accent flex items-center justify-center flex-shrink-0">
-            <Award className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 rounded-lg bg-secondary text-darkBlack font-black flex items-center justify-center text-sm shadow">
+            NC
           </div>
-          <span className="font-extrabold text-base text-white tracking-tight">{t.brandTitle}</span>
+          <span className="font-extrabold text-base text-white tracking-tight whitespace-nowrap">
+            <span className="text-secondary">Next</span>Chapter
+          </span>
         </div>
 
         <div className="flex items-center space-x-2">
-          {/* Mobile Language Toggle */}
-          <div className="flex items-center bg-white/10 rounded-lg p-0.5 border border-white/10">
-            <button
-              onClick={() => setLanguage('en')}
-              className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                language === 'en' ? 'bg-brand-accent text-white' : 'text-slate-300'
-              }`}
-            >
-              EN
-            </button>
-            <button
-              onClick={() => setLanguage('th')}
-              className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                language === 'th' ? 'bg-brand-accent text-white' : 'text-slate-300'
-              }`}
-            >
-              ไทย
-            </button>
-          </div>
-
-          {wallet.connected ? (
-            <span className="text-[11px] font-mono px-2 py-1 rounded bg-white/10 text-slate-200 border border-white/10">
-              {wallet.address ? formatAddress(wallet.address) : ''}
+          {wallet.connected && wallet.address ? (
+            <span className="text-[11px] font-mono px-2 py-1 rounded bg-white/10 text-emerald-300 font-bold border border-white/10">
+              {formatAddress(wallet.address)}
             </span>
           ) : (
             <button
               onClick={onConnectWallet}
-              className="px-2.5 py-1 rounded-lg bg-brand-accent text-white text-xs font-semibold"
+              className="px-2.5 py-1 rounded-lg bg-secondary text-darkBlack text-xs font-bold"
             >
               Connect
             </button>
@@ -307,7 +368,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="p-1.5 rounded-lg bg-white/10 text-white hover:bg-white/20 transition-colors"
+            className="p-1.5 rounded-lg bg-white/10 text-white hover:bg-white/20 transition"
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -318,17 +379,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-50 flex">
           <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 bg-darkBlack/70 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           ></div>
-          <div className="relative w-64 max-w-[85vw] h-full shadow-2xl z-10">
+          <div className="relative w-72 max-w-[85vw] h-full shadow-2xl z-10">
             <SidebarContent />
           </div>
         </div>
       )}
 
       {/* Desktop Sticky Left Sidebar */}
-      <aside className="hidden md:block w-64 lg:w-72 flex-shrink-0 h-screen sticky top-0 border-r border-slate-800 shadow-xl z-30">
+      <aside className="hidden md:block w-64 lg:w-72 flex-shrink-0 h-screen sticky top-0 border-r border-purple-950/60 shadow-xl z-30">
         <SidebarContent />
       </aside>
     </>

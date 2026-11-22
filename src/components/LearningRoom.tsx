@@ -61,37 +61,39 @@ export const LearningRoom: React.FC<LearningRoomProps> = ({
   };
 
   return (
-    <div className="bg-offWhite min-h-screen text-darkBlack pb-16">
+    <div className="space-y-6 w-full text-darkBlack">
       
-      {/* Top Header Bar */}
-      <div className="bg-white border-b border-gray-200 p-4 shadow-sm sticky top-20 z-20">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      {/* Top Header Card */}
+      <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 min-w-0">
             <button
               onClick={onBackToDashboard}
-              className="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition"
+              className="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition shrink-0"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-5 h-5" />
             </button>
-            <div>
-              <span className="text-xs font-bold text-secondary uppercase tracking-wider block">Course</span>
-              <h1 className="text-lg font-bold text-darkBlack truncate max-w-xl">
+            <div className="min-w-0">
+              <span className="text-[10px] font-bold text-secondary uppercase tracking-widest block">
+                Interactive Learning Room
+              </span>
+              <h1 className="text-base sm:text-lg font-bold text-darkBlack truncate">
                 {course.title}
               </h1>
             </div>
           </div>
 
           {/* Progress Indicator */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 shrink-0">
             <div className="text-right">
-              <span className="text-xs text-gray-500 font-medium">Your Progress</span>
+              <span className="text-xs text-gray-500 font-medium">Curriculum Progress</span>
               <p className="text-xs font-bold text-primary">
                 {courseProgress.completed} of {courseProgress.total} Lessons ({courseProgress.percentage}%)
               </p>
             </div>
             
-            <div className="w-32 bg-gray-200 h-2.5 rounded-full overflow-hidden">
+            <div className="w-28 sm:w-36 bg-gray-200 h-2.5 rounded-full overflow-hidden">
               <div 
                 className="bg-secondary h-full transition-all duration-500 rounded-full"
                 style={{ width: `${courseProgress.percentage}%` }}
@@ -103,7 +105,7 @@ export const LearningRoom: React.FC<LearningRoomProps> = ({
       </div>
 
       {/* Main Learning Room Layout */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+      <div className="w-full">
         
         {/* Course Completion Banner */}
         {courseProgress.isEligible && (

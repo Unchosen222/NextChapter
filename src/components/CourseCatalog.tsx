@@ -42,45 +42,45 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
   });
 
   return (
-    <div className="min-h-screen bg-offWhite pb-20">
+    <div className="space-y-10 w-full">
       
       {/* Hero Section matching NextChapter style */}
-      <section className="relative bg-white border-b border-gray-200 overflow-hidden py-16 lg:py-24">
+      <section className="relative bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden py-12 px-6 sm:px-12 text-center">
         {/* Soft Decorative Ambient Background */}
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary/15 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <div className="max-w-4xl mx-auto relative z-10">
           
           <div className="inline-flex items-center space-x-2 bg-primary/5 border border-primary/15 px-4 py-1.5 rounded-full text-xs font-bold text-primary mb-6">
             <Sparkles className="w-4 h-4 text-secondary" />
             <span>Next-Generation Learning with Ethereum Blockchain Verification</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-darkBlack tracking-tight mb-6">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-darkBlack tracking-tight mb-5 leading-tight">
             Empower Your Skills, <br />
             <span className="text-primary">Earn Verifiable Proof</span> on the{' '}
             <span className="text-secondary">Blockchain</span>.
           </h1>
 
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto font-normal mb-10">
-            NextChapter combines industry-grade technology courses with zero-tamper cryptographic credentials anchored on Ethereum.
+          <p className="text-sm sm:text-base text-gray-600 max-w-2xl mx-auto font-normal mb-8 leading-relaxed">
+            NextChapter combines industry-grade technology curricula with zero-tamper cryptographic credentials permanently anchored on Ethereum.
           </p>
 
           {/* Search Box */}
-          <div className="max-w-2xl mx-auto relative mb-8">
+          <div className="max-w-xl mx-auto relative mb-6">
             <div className="relative flex items-center">
-              <Search className="absolute left-5 text-gray-400 w-5 h-5 pointer-events-none" />
+              <Search className="absolute left-4 text-gray-400 w-5 h-5 pointer-events-none" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="What skill or credential do you want to master today?"
-                className="w-full pl-14 pr-32 py-4 rounded-full border-2 border-gray-200 focus:outline-none focus:border-primary shadow-sm text-base text-darkBlack bg-white transition"
+                placeholder="What skill or credential do you want to learn today?"
+                className="w-full pl-12 pr-28 py-3.5 rounded-full border-2 border-gray-200 focus:outline-none focus:border-primary shadow-sm text-sm text-darkBlack bg-white transition"
               />
               <button
                 type="button"
-                className="absolute right-2 top-2 bottom-2 bg-primary hover:bg-primary-dark text-white px-6 rounded-full font-bold text-sm transition"
+                className="absolute right-1.5 top-1.5 bottom-1.5 bg-primary hover:bg-primary-dark text-white px-5 rounded-full font-bold text-xs transition"
               >
                 Search
               </button>
@@ -88,18 +88,18 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
           </div>
 
           {/* Stats Badges */}
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-500 font-medium">
-            <div className="flex items-center space-x-2">
-              <CheckCircle className="w-4 h-4 text-emerald-600" />
-              <span>Zero-PII GDPR/PDPA Compliant</span>
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-xs text-gray-500 font-medium">
+            <div className="flex items-center space-x-1.5">
+              <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Zero-PII Compliant</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <CheckCircle className="w-4 h-4 text-emerald-600" />
-              <span>Sepolia Testnet Smart Contracts</span>
+            <div className="flex items-center space-x-1.5">
+              <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Sepolia Testnet Contracts</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <CheckCircle className="w-4 h-4 text-emerald-600" />
-              <span>Instant Public Employer Verification</span>
+            <div className="flex items-center space-x-1.5">
+              <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+              <span>Public Verification</span>
             </div>
           </div>
 
@@ -107,7 +107,7 @@ export const CourseCatalog: React.FC<CourseCatalogProps> = ({
       </section>
 
       {/* Course Catalog Content */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+      <section className="w-full">
         
         {/* Category Filter Tabs */}
         <div className="flex items-center justify-between flex-wrap gap-4 mb-8">

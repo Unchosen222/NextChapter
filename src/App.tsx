@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar } from './components/Navbar';
+import { Sidebar } from './components/Sidebar';
 import { CourseCatalog } from './components/CourseCatalog';
 import { CourseDetailsModal } from './components/CourseDetailsModal';
 import { LearningRoom } from './components/LearningRoom';
@@ -156,10 +156,10 @@ export const App: React.FC = () => {
     .length;
 
   return (
-    <div className="min-h-screen flex flex-col bg-offWhite font-sans">
+    <div className="min-h-screen flex bg-offWhite font-sans overflow-x-hidden">
       
-      {/* Top Navbar */}
-      <Navbar
+      {/* 1. Left Vertical Sidebar (Sticky on Desktop, Slide-over on Mobile) */}
+      <Sidebar
         currentUser={currentUser}
         onSwitchUser={handleSwitchUser}
         allUsers={allUsers}
@@ -170,68 +170,85 @@ export const App: React.FC = () => {
         onDisconnectWallet={handleDisconnectWallet}
         isDemoMode={isDemoMode}
         onToggleDemoMode={handleToggleDemoMode}
-        enrolledCoursesCount={enrolledCourseIds.length}
         certificatesCount={certificatesCount}
+        hasActiveLearningCourse={activeLearningCourse !== null}
       />
 
-      {/* Main Tab Routing */}
-      <main className="flex-grow">
-        {activeTab === 'discover' && (
-          <CourseCatalog
-            courses={courses}
-            currentUser={currentUser}
-            onSelectCourse={(course) => setSelectedCourseForModal(course)}
-            onStartLearning={handleStartLearning}
-            enrolledCourseIds={enrolledCourseIds}
-          />
-        )}
+      {/* 2. Main Content Scrollable Viewport */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto h-screen">
+        
+        <main className="flex-grow p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto">
+          {activeTab === 'discover' && (
+            <CourseCatalog
+              courses={courses}
+              currentUser={currentUser}
+              onSelectCourse={(course) => setSelectedCourseForModal(course)}
+              onStartLearning={handleStartLearning}
+              enrolledCourseIds={enrolledCourseIds}
+            />
+          )}
 
-        {activeTab === 'learning-room' && activeLearningCourse && (
-          <LearningRoom
-            course={activeLearningCourse}
-            currentUser={currentUser}
-            wallet={wallet}
-            onBackToDashboard={() => setActiveTab(currentUser.role === 'Student' ? 'student-hub' : 'discover')}
-            onViewCertificates={() => setActiveTab('student-hub')}
-            onConnectWallet={handleConnectWallet}
-          />
-        )}
+          {activeTab === 'learning-room' && activeLearningCourse && (
+            <LearningRoom
+              course={activeLearningCourse}
+              currentUser={currentUser}
+              wallet={wallet}
+              onBackToDashboard={() => setActiveTab(currentUser.role === 'Student' ? 'student-hub' : 'discover')}
+              onViewCertificates={() => setActiveTab('student-hub')}
+              onConnectWallet={handleConnectWallet}
+            />
+          )}
 
-        {activeTab === 'student-hub' && (
-          <TraineeDashboard
-            currentUser={currentUser}
-            courses={courses}
-            wallet={wallet}
-            onConnectWallet={handleConnectWallet}
-            onStartLearning={handleStartLearning}
-            onVerifyCert={handleVerifyCert}
-          />
-        )}
+          {activeTab === 'student-hub' && (
+            <TraineeDashboard
+              currentUser={currentUser}
+              courses={courses}
+              wallet={wallet}
+              onConnectWallet={handleConnectWallet}
+              onStartLearning={handleStartLearning}
+              onVerifyCert={handleVerifyCert}
+            />
+          )}
 
-        {activeTab === 'teacher-hub' && (
-          <TeacherDashboard
-            currentUser={currentUser}
-            courses={courses}
-            wallet={wallet}
-            onConnectWallet={handleConnectWallet}
-            onRefreshData={refreshData}
-          />
-        )}
+          {activeTab === 'teacher-hub' && (
+            <TeacherDashboard
+              currentUser={currentUser}
+              courses={courses}
+              wallet={wallet}
+              onConnectWallet={handleConnectWallet}
+              onRefreshData={refreshData}
+            />
+          )}
 
-        {activeTab === 'admin-panel' && (
-          <AdminPanel
-            currentUser={currentUser}
-            courses={courses}
-            wallet={wallet}
-            onConnectWallet={handleConnectWallet}
-            onRefreshData={refreshData}
-          />
-        )}
+          {activeTab === 'admin-panel' && (
+            <AdminPanel
+              currentUser={currentUser}
+              courses={courses}
+              wallet={wallet}
+              onConnectWallet={handleConnectWallet}
+              onRefreshData={refreshData}
+            />
+          )}
 
-        {activeTab === 'verify' && (
-          <VerifyCertificate initialCertId={verifyTargetCertId} />
-        )}
-      </main>
+          {activeTab === 'verify' && (
+            <VerifyCertificate initialCertId={verifyTargetCertId} />
+          )}
+        </main>
+
+        {/* Global Footer */}
+        <footer className="bg-white border-t border-gray-200 py-6 px-4 text-center text-xs text-gray-500 mt-auto">
+          <div className="flex items-center justify-center space-x-2 text-sm font-bold mb-1">
+            <span className="text-secondary">Next</span>
+            <span className="text-primary">Chapter</span>
+            <span className="text-gray-400 font-normal">|</span>
+            <span className="text-gray-600 font-medium text-xs">CSI301 Blockchain Credentialing Platform</span>
+          </div>
+          <p className="text-[11px] text-gray-400">
+            Sripatum University (SPU) • Sepolia Testnet Cryptographic Zero-PII Verification
+          </p>
+        </footer>
+
+      </div>
 
       {/* Course Enrollment Modal */}
       {selectedCourseForModal && (
@@ -245,22 +262,6 @@ export const App: React.FC = () => {
           }}
         />
       )}
-
-      {/* Footer matching NextChapter */}
-      <footer className="bg-white border-t border-gray-200 mt-auto py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-gray-500">
-          <div className="flex items-center justify-center space-x-2 text-base font-bold mb-2">
-            <span className="text-secondary">Next</span>
-            <span className="text-primary">Chapter</span>
-            <span className="text-gray-400 font-normal">|</span>
-            <span className="text-gray-600 font-medium text-xs">CSI301 Blockchain Project</span>
-          </div>
-          <p className="mb-2">Empowering learners and creators with immutable Ethereum credentials.</p>
-          <p className="text-gray-400 font-mono text-[11px]">
-            Smart Contract: Ethereum Sepolia • Zero-PII SHA-256 Verification • Sripatum University (SPU)
-          </p>
-        </div>
-      </footer>
 
     </div>
   );
