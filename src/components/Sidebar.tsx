@@ -67,30 +67,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
     <div className="flex flex-col h-full bg-[#1e1329] text-white border-r border-purple-950/60 shadow-2xl select-none">
       
       {/* 1. Brand Logo Header */}
-      <div className="p-5 border-b border-white/10">
+      <div className="p-4 py-5 border-b border-white/10 flex items-center justify-center">
         <div 
           onClick={() => handleNavClick('discover')}
-          className="flex items-center space-x-3 cursor-pointer group"
+          className="cursor-pointer group flex items-center justify-center w-full"
         >
           <img 
             src="/logo.png" 
             alt="NextChapter Logo" 
-            className="w-10 h-10 object-contain rounded-xl bg-white/5 p-1 shrink-0 group-hover:scale-105 transition-transform duration-200"
+            className="h-16 lg:h-20 w-auto max-w-[200px] object-contain group-hover:scale-105 transition-transform duration-200"
           />
-          <div className="min-w-0">
-            <div className="flex items-center space-x-1 leading-none">
-              <span className="text-secondary font-black text-2xl tracking-tight whitespace-nowrap">Next</span>
-              <span className="text-white font-black text-2xl tracking-tight whitespace-nowrap">Chapter</span>
-            </div>
-            <div className="flex items-center space-x-1.5 mt-1.5">
-              <span className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-secondary/20 text-secondary border border-secondary/30 whitespace-nowrap">
-                Web3 Academy
-              </span>
-              <span className="text-[9px] text-gray-400 font-mono whitespace-nowrap">
-                Sepolia
-              </span>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -365,19 +351,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       {/* Mobile Top Header */}
-      <header className="md:hidden sticky top-0 z-40 bg-[#1e1329] text-white border-b border-purple-950/80 px-4 py-3 flex items-center justify-between shadow-md">
+      <header className="md:hidden sticky top-0 z-40 bg-[#1e1329] text-white border-b border-purple-950/80 px-4 py-2.5 flex items-center justify-between shadow-md">
         <div 
-          className="flex items-center space-x-2.5 cursor-pointer"
+          className="flex items-center cursor-pointer"
           onClick={() => handleNavClick('discover')}
         >
           <img 
             src="/logo.png" 
-            alt="NextChapter" 
-            className="w-8 h-8 object-contain rounded-lg bg-white/5 p-0.5 shrink-0"
+            alt="NextChapter Logo" 
+            className="h-10 w-auto object-contain shrink-0"
           />
-          <span className="font-extrabold text-base text-white tracking-tight whitespace-nowrap">
-            <span className="text-secondary">Next</span>Chapter
-          </span>
         </div>
 
         <div className="flex items-center space-x-2">
